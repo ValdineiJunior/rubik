@@ -1,7 +1,7 @@
 Array.prototype.clone = function() {
-	var c = [];
-	var len = this.length;
-	for (var i=0;i<len;i++) { c.push(this[i]); }
+	let c = [];
+	let len = this.length;
+	for (let i=0;i<len;i++) { c.push(this[i]); }
 	return c;
 }
 
@@ -9,7 +9,7 @@ Array.prototype.random = function() {
 	return this[Math.floor(Math.random()*this.length)];
 }
 
-var Face = OZ.Class();
+let Face = OZ.Class();
 Face.SIZE	= 100;
 Face.LEFT	= 0;
 Face.RIGHT	= 1;
@@ -78,7 +78,7 @@ Face.prototype.getColor = function() {
 	return this._color;
 }
 
-var Cube = OZ.Class();
+let Cube = OZ.Class();
 Cube.prototype.init = function(position) {
 	this._rotation = null;
 	this._position = position;
@@ -96,7 +96,7 @@ Cube.prototype.getFaces = function() {
 
 Cube.prototype.setFace = function(type, color) {
 	if (!(type in this._faces)) {
-		var face = new Face(this, type);
+		let face = new Face(this, type);
 		this._node.appendChild(face.getNode());
 		this._faces[type] = face;
 	}
@@ -109,7 +109,7 @@ Cube.prototype.setRotation = function(rotation) {
 }
 
 Cube.prototype.complete = function() {
-	for (var i=0;i<6;i++) {
+	for (let i=0;i<6;i++) {
 		if (i in this._faces) { continue; }
 		this.addFace(i, "black");
 	}
@@ -117,22 +117,22 @@ Cube.prototype.complete = function() {
 
 Cube.prototype.prepareColorChange = function(sourceCube, rotation) {
 	this._tmpFaces = {};
-	var sourceFaces = sourceCube.getFaces();
-	for (var p in sourceFaces) { 
-		var sourceType = parseInt(p);
-		var targetType = this._rotateType(sourceType, rotation);
+	let sourceFaces = sourceCube.getFaces();
+	for (let p in sourceFaces) { 
+		let sourceType = parseInt(p);
+		let targetType = this._rotateType(sourceType, rotation);
 		this._tmpFaces[targetType] = sourceFaces[sourceType].getColor(); 
 	}
 }
 
 Cube.prototype.commitColorChange = function() {
-//	var parent = this._node.parentNode;
+//	let parent = this._node.parentNode;
 //	parent.removeChild(this._node);
 
 	OZ.DOM.clear(this._node);
 	this._faces = {};
-	for (var p in this._tmpFaces) { 
-		var type = parseInt(p);
+	for (let p in this._tmpFaces) { 
+		let type = parseInt(p);
 		this.setFace(type, this._tmpFaces[p]); 
 	}
 	this._tmpFaces = {};
@@ -143,10 +143,10 @@ Cube.prototype.commitColorChange = function() {
 }
 
 Cube.prototype._rotateType = function(type, rotation) {
-	for (var i=0;i<3;i++) {
+	for (let i=0;i<3;i++) {
 		if (!rotation[i]) { continue; }
-		var faces = Face.ROTATION[i];
-		var index = faces.indexOf(type);
+		let faces = Face.ROTATION[i];
+		let index = faces.indexOf(type);
 		if (index == -1) { continue; } /* no rotation available */
 		index = (index + rotation[i] + faces.length) % faces.length;
 		return faces[index];
@@ -156,21 +156,21 @@ Cube.prototype._rotateType = function(type, rotation) {
 }
 
 Cube.prototype._update = function() {
-	var transform = "";
+	let transform = "";
 	transform += "translate3d("+(-Face.SIZE/2)+"px, "+(-Face.SIZE/2)+"px, "+(-Face.SIZE/2)+"px) ";
 	if (this._rotation) { transform += this._rotation + " "; }
 
-	var half = Math.floor(Rubik.SIZE/2);
-	var x = this._position[0];
-	var y = this._position[1];
-	var z = -this._position[2];
+	let half = Math.floor(Rubik.SIZE/2);
+	let x = this._position[0];
+	let y = this._position[1];
+	let z = -this._position[2];
 	x -= half;
 	y -= half;
 	z += half + 1/2;
 	transform += "translate3d("+(x*Face.SIZE)+"px, "+(y*Face.SIZE)+"px, "+(z*Face.SIZE)+"px)";
 
-	var prop = OZ.CSS3.getProperty("transform");
-	var val = this._rotation ? prop + " 300ms" : "";
+	let prop = OZ.CSS3.getProperty("transform");
+	let val = this._rotation ? prop + " 300ms" : "";
 	OZ.CSS3.set(this._node, "transition", val);
 
 	OZ.CSS3.set(this._node, "transform", transform);
@@ -188,7 +188,7 @@ Cube.prototype.getFaces = function() {
 	return this._faces;
 }
 
-var Rubik = OZ.Class();
+let Rubik = OZ.Class();
 Rubik.SIZE = 3;
 Rubik.prototype.init = function() {
 	this._cubes = [];
@@ -216,8 +216,8 @@ Rubik.prototype.init = function() {
 }
 
 Rubik.prototype.randomize = function() {
-	var remain = 10;
-	var cb = function() {
+	let remain = 10;
+	let cb = function() {
 		remain--;
 		if (remain > 0) { 
 			this._rotateRandom();
@@ -233,14 +233,14 @@ Rubik.prototype.randomize = function() {
 			
 		}
 	}
-	var e = OZ.Event.add(null, "rotated", cb.bind(this));
+	let e = OZ.Event.add(null, "rotated", cb.bind(this));
 	this._rotateRandom();
 }
 
 Rubik.prototype._rotateRandom = function() {
-	var method = "_rotate" + ["X", "Y", "Z"].random();
-	var dir = [-1, 1].random();
-	var layer = Math.floor(Math.random()*Rubik.SIZE);
+	let method = "_rotate" + ["X", "Y", "Z"].random();
+	let dir = [-1, 1].random();
+	let layer = Math.floor(Math.random()*Rubik.SIZE);
 	this[method](dir, layer);
 }
 
@@ -251,11 +251,11 @@ Rubik.prototype._update = function() {
 Rubik.prototype._eventToFace = function(e) {
 	if (document.elementFromPoint) {
 		e = (e.touches ? e.touches[0] : e);
-		var node = document.elementFromPoint(e.clientX, e.clientY);
+		let node = document.elementFromPoint(e.clientX, e.clientY);
 	} else {
-		var node = OZ.Event.target(e);
+		let node = OZ.Event.target(e);
 	}
-	var index = this._faceNodes.indexOf(node);
+	let index = this._faceNodes.indexOf(node);
 	if (index == -1) { return null; }
 	return this._faces[index];
 }
@@ -263,9 +263,9 @@ Rubik.prototype._eventToFace = function(e) {
 Rubik.prototype._dragStart = function(e) {
 	this._faces = [];
 	this._faceNodes = [];
-	for (var i=0;i<this._cubes.length;i++) {
-		var faces = this._cubes[i].getFaces();
-		for (var p in faces) {
+	for (let i=0;i<this._cubes.length;i++) {
+		let faces = this._cubes[i].getFaces();
+		for (let p in faces) {
 			this._faces.push(faces[p]);
 			this._faceNodes.push(faces[p].getNode());
 		}
@@ -284,18 +284,18 @@ Rubik.prototype._dragMove = function(e) {
 	if (e.touches && e.touches.length > 1) { return; }
 	
 	if (this._drag.face) { /* check second face for rotation */
-		var thisFace = this._eventToFace(e);
+		let thisFace = this._eventToFace(e);
 		if (!thisFace || thisFace == this._drag.face) { return; }
 		this._dragEnd();
 		this._rotate(this._drag.face, thisFace);
 	} else { /* rotate cube */
 		e = (e.touches ? e.touches[0] : e);
-		var mouse = [e.clientX, e.clientY];
-		var dx = mouse[0] - this._drag.mouse[0];
-		var dy = mouse[1] - this._drag.mouse[1];
-		var norm = Math.sqrt(dx*dx+dy*dy);
+		let mouse = [e.clientX, e.clientY];
+		let dx = mouse[0] - this._drag.mouse[0];
+		let dy = mouse[1] - this._drag.mouse[1];
+		let norm = Math.sqrt(dx*dx+dy*dy);
 		if (!norm) { return; }
-		var N = [-dy/norm, dx/norm];
+		let N = [-dy/norm, dx/norm];
 		
 		this._drag.mouse = mouse;
 		this._rotation = Quaternion.fromRotation([N[0], N[1], 0], norm/2).multiply(this._rotation);
@@ -313,16 +313,16 @@ Rubik.prototype._dragEnd = function(e) {
 }
 
 Rubik.prototype._rotate = function(face1, face2) {
-	var t1 = face1.getType();
-	var t2 = face2.getType();
-	var pos1 = face1.getCube().getPosition();
-	var pos2 = face2.getCube().getPosition();
+	let t1 = face1.getType();
+	let t2 = face2.getType();
+	let pos1 = face1.getCube().getPosition();
+	let pos2 = face2.getCube().getPosition();
 	
 	/* find difference between cubes */
-	var diff = 0;
-	var diffIndex = -1;
-	for (var i=0;i<3;i++) {
-		var d = pos1[i]-pos2[i];
+	let diff = 0;
+	let diffIndex = -1;
+	for (let i=0;i<3;i++) {
+		let d = pos1[i]-pos2[i];
 		if (d) {
 			if (diffIndex != -1) { return; } /* different in >1 dimensions */
 			diff = (d > 0 ? 1 : -1);
@@ -334,7 +334,7 @@ Rubik.prototype._rotate = function(face1, face2) {
 		switch (t1) {
 			case Face.FRONT:
 			case Face.BACK:
-				var coef = (t1 == Face.FRONT ? 1 : -1);
+				let coef = (t1 == Face.FRONT ? 1 : -1);
 				if (diffIndex == 0) { this._rotateY(coef*diff, pos1[1]); } else { this._rotateX(coef*diff, pos1[0]); }
 			break;
 
@@ -385,17 +385,17 @@ Rubik.prototype._rotate = function(face1, face2) {
 }
 
 Rubik.prototype._rotateX = function(dir, layer) {
-	var cubes = [];
-	for (var i=0;i<Rubik.SIZE*Rubik.SIZE;i++) {
+	let cubes = [];
+	for (let i=0;i<Rubik.SIZE*Rubik.SIZE;i++) {
 		cubes.push(this._cubes[layer + i*Rubik.SIZE]);
 	}
 	this._rotateCubes(cubes, [dir, 0, 0]);
 }
 
 Rubik.prototype._rotateY = function(dir, layer) {
-	var cubes = [];
-	for (var i=0;i<Rubik.SIZE;i++) {
-		for (var j=0;j<Rubik.SIZE;j++) {
+	let cubes = [];
+	for (let i=0;i<Rubik.SIZE;i++) {
+		for (let j=0;j<Rubik.SIZE;j++) {
 			cubes.push(this._cubes[j + layer*Rubik.SIZE + i*Rubik.SIZE*Rubik.SIZE]);
 		}
 	}
@@ -403,33 +403,33 @@ Rubik.prototype._rotateY = function(dir, layer) {
 }
 
 Rubik.prototype._rotateZ = function(dir, layer) {
-	var cubes = [];
-	var offset = layer * Rubik.SIZE * Rubik.SIZE;
-	for (var i=0;i<Rubik.SIZE*Rubik.SIZE;i++) {
+	let cubes = [];
+	let offset = layer * Rubik.SIZE * Rubik.SIZE;
+	for (let i=0;i<Rubik.SIZE*Rubik.SIZE;i++) {
 		cubes.push(this._cubes[offset+i]);
 	}
 	this._rotateCubes(cubes, [0, 0, dir]);
 }
 
 Rubik.prototype._rotateCubes = function(cubes, rotation) {
-	var suffixes = ["X", "Y", ""];
+	let suffixes = ["X", "Y", ""];
 	
-	var prefix = OZ.CSS3.getPrefix("transition");
+	let prefix = OZ.CSS3.getPrefix("transition");
 	if (prefix === null) {
 		this._finalizeRotation(cubes, rotation);
 	} else {
-		var cb = function() {
+		let cb = function() {
 			OZ.Event.remove(e);
 			this._finalizeRotation(cubes, rotation);
 		}
-		var e = OZ.Event.add(document.body, "webkitTransitionEnd transitionend MSTransitionEnd oTransitionEnd", cb.bind(this));
+		let e = OZ.Event.add(document.body, "webkitTransitionEnd transitionend MSTransitionEnd oTransitionEnd", cb.bind(this));
 
-		var str = "";
-		for (var i=0;i<3;i++) {
+		let str = "";
+		for (let i=0;i<3;i++) {
 			if (!rotation[i]) { continue; }
 			str = "rotate" + suffixes[i] + "(" + (90*rotation[i]) + "deg)";
 		}
-		for (var i=0;i<cubes.length;i++) { cubes[i].setRotation(str); }
+		for (let i=0;i<cubes.length;i++) { cubes[i].setRotation(str); }
 	}
 	
 }
@@ -438,8 +438,8 @@ Rubik.prototype._rotateCubes = function(cubes, rotation) {
  * Remap colors
  */
 Rubik.prototype._finalizeRotation = function(cubes, rotation) {
-	var direction = 0;
-	for (var i = 0; i < 3; i++) {
+	let direction = 0;
+	for (let i = 0; i < 3; i++) {
 		if (rotation[i]) {
 			direction = rotation[i];
 		}
@@ -449,19 +449,19 @@ Rubik.prototype._finalizeRotation = function(cubes, rotation) {
 		direction *= -1;
 	}
 
-	var half = Math.floor(Rubik.SIZE / 2);
+	let half = Math.floor(Rubik.SIZE / 2);
 
-	for (var i = 0; i < cubes.length; i++) {
-		var x = i % Rubik.SIZE - half;
-		var y = Math.floor(i / Rubik.SIZE) - half;
+	for (let i = 0; i < cubes.length; i++) {
+		let x = i % Rubik.SIZE - half;
+		let y = Math.floor(i / Rubik.SIZE) - half;
 
-		var source = [y * direction + half, -x * direction + half];
-		var sourceIndex = source[0] + Rubik.SIZE * source[1];
+		let source = [y * direction + half, -x * direction + half];
+		let sourceIndex = source[0] + Rubik.SIZE * source[1];
 
 		cubes[i].prepareColorChange(cubes[sourceIndex], rotation);
 	}
 
-	for (var i = 0; i < cubes.length; i++) {
+	for (let i = 0; i < cubes.length; i++) {
 		cubes[i].commitColorChange();
 	}
 
@@ -480,10 +480,10 @@ Rubik.prototype._finalizeRotation = function(cubes, rotation) {
 
 
 Rubik.prototype._build = function() {
-	for (var z=0;z<Rubik.SIZE;z++) {
-		for (var y=0;y<Rubik.SIZE;y++) {
-			for (var x=0;x<Rubik.SIZE;x++) {
-				var cube = new Cube([x, y, z]);
+	for (let z=0;z<Rubik.SIZE;z++) {
+		for (let y=0;y<Rubik.SIZE;y++) {
+			for (let x=0;x<Rubik.SIZE;x++) {
+				let cube = new Cube([x, y, z]);
 				this._cubes.push(cube);
 				
 				if (z == 0) { cube.setFace(Face.FRONT, "#ffffff"); }
