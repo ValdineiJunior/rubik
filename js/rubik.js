@@ -439,35 +439,45 @@ Rubik.prototype._rotateCubes = function(cubes, rotation) {
  */
 Rubik.prototype._finalizeRotation = function(cubes, rotation) {
 	var direction = 0;
-	for (var i=0;i<3;i++) { 
-		if (rotation[i]) { direction = rotation[i]; } 
+	for (var i = 0; i < 3; i++) {
+		if (rotation[i]) {
+			direction = rotation[i];
+		}
 	}
-	
-	if (rotation[0]) { direction *= -1; } /* FIXME wtf */
-	
-	var half = Math.floor(Rubik.SIZE/2);
-	
-	for (var i=0;i<cubes.length;i++) { 
+
+	if (rotation[0] !== undefined && rotation[0] !== null && rotation[0]) {
+		direction *= -1;
+	}
+
+	var half = Math.floor(Rubik.SIZE / 2);
+
+	for (var i = 0; i < cubes.length; i++) {
 		var x = i % Rubik.SIZE - half;
 		var y = Math.floor(i / Rubik.SIZE) - half;
-		
-		var source = [y*direction + half, -x*direction + half];
-		var sourceIndex = source[0] + Rubik.SIZE*source[1];
-		
+
+		var source = [y * direction + half, -x * direction + half];
+		var sourceIndex = source[0] + Rubik.SIZE * source[1];
+
 		cubes[i].prepareColorChange(cubes[sourceIndex], rotation);
 	}
-	
-	for (var i=0;i<cubes.length;i++) { cubes[i].commitColorChange(); }
-	
-	setTimeout(function() {
-		if (this._help.b) {
-			this._help.b.style.opacity = 0;
-			this._help.b = null;
-		}
-		
-		this.dispatch("rotated");
-	}.bind(this), 100);
-}
+
+	for (var i = 0; i < cubes.length; i++) {
+		cubes[i].commitColorChange();
+	}
+
+	setTimeout(
+		function () {
+			if (this._help.b) {
+				this._help.b.style.opacity = 0;
+				this._help.b = null;
+			}
+
+			this.dispatch("rotated");
+		}.bind(this),
+		100
+	);
+};
+
 
 Rubik.prototype._build = function() {
 	for (var z=0;z<Rubik.SIZE;z++) {
@@ -493,5 +503,3 @@ Rubik.prototype._build = function() {
 	}
 
 }
-
-
