@@ -476,14 +476,14 @@ Rubik.prototype._build = function() {
 				var cube = new Cube([x, y, z]);
 				this._cubes.push(cube);
 				
-				if (z == 0) { cube.setFace(Face.FRONT, "red"); }
-				if (z == 2) { cube.setFace(Face.BACK, "blue"); }
+				if (z == 0) { cube.setFace(Face.FRONT, "#ffffff"); }
+				if (z == 2) { cube.setFace(Face.BACK, "#ffff00"); }
 				
-				if (x == 0) { cube.setFace(Face.LEFT, "green"); }
-				if (x == 2) { cube.setFace(Face.RIGHT, "yellow"); }
+				if (x == 0) { cube.setFace(Face.LEFT, "#0066fe"); }
+				if (x == 2) { cube.setFace(Face.RIGHT, "#01cd0d"); }
 				
-				if (y == 0) { cube.setFace(Face.TOP, "cyan"); }
-				if (y == 2) { cube.setFace(Face.BOTTOM, "teal"); }
+				if (y == 0) { cube.setFace(Face.TOP, "#ff0100"); }
+				if (y == 2) { cube.setFace(Face.BOTTOM, "#ff6600"); }
 				
 				// cube.complete();
 				
